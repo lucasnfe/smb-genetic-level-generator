@@ -1,5 +1,100 @@
 package dk.itu.mario.geneticAlgorithm;
 
-public class GeneticAlgorithm {
+import java.util.Arrays;
 
+public abstract class GeneticAlgorithm {
+
+	private int eliteSize;
+	
+	private int currentGeneration;
+	private int fitnessEvaluationAmount;
+	
+	private float mutationProbability;
+	private float crossOverProbability;
+	
+	protected Individual population[];
+	protected Individual matingPool[];
+	
+	public GeneticAlgorithm(int populationSize, float mutationProbability, float crossOverProbability, int eliteSize) {
+		
+		population = new Individual[populationSize];
+		matingPool = new Individual[populationSize];
+		
+		this.mutationProbability = mutationProbability;
+		this.crossOverProbability = crossOverProbability;
+		
+		this.eliteSize = eliteSize;
+	}
+	
+	public abstract void InitPopulation();
+	
+	public void EvaluatePopulation() {
+		
+		for(int i = 0; i < population.length; i++) {
+			
+			population[i].calcFitness();
+			fitnessEvaluationAmount++;
+		}
+	}
+	
+	public abstract void SelectPopulation();
+	
+	public void StartEvolution(int maxGeneration) {
+	
+		InitPopulation();
+		EvaluatePopulation();
+		
+		while(currentGeneration < maxGeneration)
+		{
+			SelectPopulation();
+			CrossOver();
+			Mutation();
+			
+			if(eliteSize > 0) {
+				
+				Elitism();
+			}
+				
+			EvaluatePopulation();
+			currentGeneration++;
+		}
+	}
+	
+	public abstract void CrossOver();
+	public abstract void Mutation();
+	
+	public void Elitism()
+	{
+		Arrays.sort(population);
+		
+		for(int i = 0; i < eliteSize; i++)
+		{
+			matingPool[i] = population[i];
+		}
+	}
+	
+	public float getMurationProbability() {
+	
+		return mutationProbability;
+	}
+	
+	public float getCrossOverProbability() {
+		
+		return crossOverProbability;
+	}
+	
+	public int getEliteSize() {
+		
+		return eliteSize;
+	}
+	
+	public int getCurrentGeneration() {
+		
+		return currentGeneration;
+	}
+	
+	public int getFitnessEvaluationAmount()
+	{
+		return fitnessEvaluationAmount;
+	}
 }
