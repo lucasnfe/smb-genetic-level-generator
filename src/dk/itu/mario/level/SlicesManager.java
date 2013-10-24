@@ -1,5 +1,7 @@
 package dk.itu.mario.level;
 
+import dk.itu.mario.engine.sprites.Enemy;
+
 public class SlicesManager extends Level {
 
 	private static byte[] sliceA = 
@@ -33,7 +35,7 @@ public class SlicesManager extends Level {
 		EMPTY_SPACE, 
 		EMPTY_SPACE, 
 		EMPTY_SPACE, 
-		COIN, 
+		BLOCK_COIN, 
 		EMPTY_SPACE,
 		EMPTY_SPACE, 
 		EMPTY_SPACE,

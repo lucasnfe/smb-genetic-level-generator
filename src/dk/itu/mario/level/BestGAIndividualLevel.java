@@ -1,18 +1,20 @@
 package dk.itu.mario.level;
 
-import java.util.Random;
-
 import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelInterface;
+import dk.itu.mario.geneticAlgorithm.Individual;
 
 public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
     private GamePlay playerM;
+    private Individual bestIndividual;
 
-    public BestGAIndividualLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics) {
+    public BestGAIndividualLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestIndividual) {
         
     	super(width, height);
+    	
         this.playerM = playerMetrics;
+        this.bestIndividual = bestIndividual;
         
         creat(seed, difficulty, type);
     }
@@ -21,13 +23,10 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     	// Create the map
     	int floor = height - 1;
-    	Random gerador = new Random();
     	
-    	for(int i = 0; i < width; i++)
+    	for(int i = 0; i < bestIndividual.getSize(); i++)
     	{
-            int randomSlice = gerador.nextInt(SlicesManager.getSliceAmount());
-    		
-            setBlock(i, SlicesManager.getSlice(randomSlice));
+            setBlock(i, SlicesManager.getSlice(bestIndividual.getGen(i)));
     	}
     	
         // Create the exit

@@ -1,6 +1,7 @@
 package dk.itu.mario.geneticAlgorithm;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 public abstract class GeneticAlgorithm {
 
@@ -14,6 +15,24 @@ public abstract class GeneticAlgorithm {
 	
 	protected Individual population[];
 	protected Individual matingPool[];
+	
+	static private Comparator<Individual> ascTitle;
+
+    // We initialize static variables inside a static block.
+    static {
+    	
+    	ascTitle = new Comparator<Individual>() {
+        
+    	@Override
+        public int compare(Individual i1, Individual i2) {
+        	
+    	        if (i1.getFitness() < i2.getFitness()) 
+    	        	return 1;
+
+    	        return 0;
+    		}
+    	};
+    };
 	
 	public GeneticAlgorithm(int populationSize, float mutationProbability, float crossOverProbability, int eliteSize) {
 		
@@ -57,7 +76,7 @@ public abstract class GeneticAlgorithm {
 				
 			EvaluatePopulation();
 			currentGeneration++;
-		}
+		} 
 	}
 	
 	public abstract void CrossOver();
@@ -71,6 +90,13 @@ public abstract class GeneticAlgorithm {
 		{
 			matingPool[i] = population[i];
 		}
+	}
+	
+	public Individual getBestIndividual()
+	{
+		Arrays.sort(population, ascTitle);
+		
+		return population[population.length - 1];
 	}
 	
 	public float getMurationProbability() {
