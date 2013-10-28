@@ -7,21 +7,21 @@ public abstract class GeneticAlgorithm {
 
 	private int eliteSize;
 	
-	private int currentGeneration;
-	private int fitnessEvaluationAmount;
+	protected int currentGeneration;
+	protected int fitnessEvaluationAmount;
 	
-	private float mutationProbability;
-	private float crossOverProbability;
+	protected float mutationProbability;
+	protected float crossOverProbability;
 	
 	protected Individual population[];
 	protected Individual matingPool[];
 	
-	static private Comparator<Individual> ascTitle;
+	protected static Comparator<Individual> individualComparator;
 
     // We initialize static variables inside a static block.
     static {
     	
-    	ascTitle = new Comparator<Individual>() {
+    	individualComparator = new Comparator<Individual>() {
         
     	@Override
         public int compare(Individual i1, Individual i2) {
@@ -45,9 +45,7 @@ public abstract class GeneticAlgorithm {
 		this.eliteSize = eliteSize;
 	}
 	
-	public abstract void InitPopulation();
-	
-	public void EvaluatePopulation() {
+	private void EvaluatePopulation() {
 		
 		for(int i = 0; i < population.length; i++) {
 			
@@ -56,7 +54,7 @@ public abstract class GeneticAlgorithm {
 		}
 	}
 	
-	public abstract void SelectPopulation();
+	protected abstract void SelectPopulation();
 	
 	public void StartEvolution(int maxGeneration) {
 	
@@ -73,18 +71,23 @@ public abstract class GeneticAlgorithm {
 				
 				Elitism();
 			}
+			
+			population = matingPool.clone();
 				
 			EvaluatePopulation();
 			currentGeneration++;
+			
+			System.out.format("best fitness: %f\n", getBestIndividual().getFitness());
 		} 
 	}
 	
-	public abstract void CrossOver();
-	public abstract void Mutation();
+	protected abstract void InitPopulation();
+	protected abstract void CrossOver();
+	protected abstract void Mutation();
 	
-	public void Elitism()
+	private void Elitism()
 	{
-		Arrays.sort(population);
+		Arrays.sort(population, individualComparator);
 		
 		for(int i = 0; i < eliteSize; i++)
 		{
@@ -94,33 +97,8 @@ public abstract class GeneticAlgorithm {
 	
 	public Individual getBestIndividual()
 	{
-		Arrays.sort(population, ascTitle);
+		Arrays.sort(population, individualComparator);
 		
-		return population[population.length - 1];
-	}
-	
-	public float getMurationProbability() {
-	
-		return mutationProbability;
-	}
-	
-	public float getCrossOverProbability() {
-		
-		return crossOverProbability;
-	}
-	
-	public int getEliteSize() {
-		
-		return eliteSize;
-	}
-	
-	public int getCurrentGeneration() {
-		
-		return currentGeneration;
-	}
-	
-	public int getFitnessEvaluationAmount()
-	{
-		return fitnessEvaluationAmount;
+		return population[0];
 	}
 }

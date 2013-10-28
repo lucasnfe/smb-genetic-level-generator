@@ -28,7 +28,20 @@ public class Individual {
 	
 	public void calcFitness()
 	{
+		fitness = 0.0f;
 		
+		for(int i = 0; i < chromossomeSize; i++)
+		{
+			if(chromossome[i] == 0)
+			{
+				fitness += 1.0f;
+			}
+		}
+	}
+	
+	public int[] getChromossome()
+	{
+		return chromossome;
 	}
 	
 	public int getGen(int genIndex)

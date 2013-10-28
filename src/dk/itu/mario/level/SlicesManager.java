@@ -42,7 +42,26 @@ public class SlicesManager extends Level {
 		HILL_TOP 
 	};
 	
-	private static byte[][] slices = {sliceA, sliceB};
+	private static byte[] sliceC = 
+	{
+		EMPTY_SPACE,
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE,
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE, 
+		EMPTY_SPACE,
+		EMPTY_SPACE, 
+		EMPTY_SPACE,
+		EMPTY_SPACE 
+	};
+	
+	private static byte[][] slices = {sliceA, sliceB, sliceC};
 	
 	public static byte[] getSlice(int sliceNumber)
 	{
