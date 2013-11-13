@@ -22,11 +22,19 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     private void creat(long seed, int difficulty, int type) {
     
     	// Create the map
-    	int floor = height - 1;
+    	int floor = height;
     	
     	for(int i = 0; i < bestIndividual.getSize(); i++)
     	{
-            setBlock(i, SlicesManager.getSlice(bestIndividual.getGen(i)));
+    		int ground[] = bestIndividual.getGround();
+    		
+    		// Setting the ground blocks 
+    		setBlock(i, floor - ground[i], HILL_TOP);
+    		
+            for(int j = floor - ground[i] + 1; j <= floor; j++)
+            {
+            	setBlock(i, j, HILL_FILL);
+            }
     	}
     	
         // Create the exit

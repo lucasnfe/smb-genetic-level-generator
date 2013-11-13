@@ -66,11 +66,11 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		{
 			if(generator.nextDouble() < crossOverProbability)
 			{
-				System.arraycopy(matingPool[i].getChromossome(), 0, son1.getChromossome(), 0, crossPoint);
-				System.arraycopy(matingPool[i + 1].getChromossome(), crossPoint + 1, son1.getChromossome(), crossPoint + 1, chromossomeSize - crossPoint - 1);
+				System.arraycopy(matingPool[i].getGround(), 0, son1.getGround(), 0, crossPoint);
+				System.arraycopy(matingPool[i + 1].getGround(), crossPoint + 1, son1.getGround(), crossPoint + 1, chromossomeSize - crossPoint - 1);
 			
-				System.arraycopy(matingPool[i + 1].getChromossome(), 0, son2.getChromossome(), 0, crossPoint);
-				System.arraycopy(matingPool[i].getChromossome(), crossPoint + 1, son2.getChromossome(), crossPoint + 1, chromossomeSize - crossPoint - 1);
+				System.arraycopy(matingPool[i + 1].getGround(), 0, son2.getGround(), 0, crossPoint);
+				System.arraycopy(matingPool[i].getGround(), crossPoint + 1, son2.getGround(), crossPoint + 1, chromossomeSize - crossPoint - 1);
 			
 				matingPool[i] = son1;
 				matingPool[i + 1] = son2;
@@ -83,13 +83,13 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		
 		Random generator = new Random();
 		
-		for(int i = 0; i < matingPool.length; i++)
-		{
-			if(generator.nextDouble() < mutationProbability)
-			{
-				matingPool[i] = new Individual(chromossomeSize);
-			}
-		}
+//		for(int i = 0; i < matingPool.length; i++)
+//		{
+//			if(generator.nextDouble() < mutationProbability)
+//			{
+//				matingPool[i] = new Individual(chromossomeSize);
+//			}
+//		}
 	}
 
 }
