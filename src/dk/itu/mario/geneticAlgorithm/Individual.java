@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class Individual {
 
-	private static final int MIN_GROUND_SEQUENCE = 5;
-	private static final int MAX_GROUND_HEIGHT = 6;
+	public static final int MIN_GROUND_SEQUENCE = 5;
+	public static final int MAX_GROUND_HEIGHT = 6;
 	
 	private float fitness;
 	
@@ -94,6 +94,11 @@ public class Individual {
 	public int[] getGround()
 	{
 		return ground;
+	}
+	
+	public void setGroundBlock(int position, int block)
+	{
+		ground[position] = block;
 	}
 	
 	public int[] getCoins()
