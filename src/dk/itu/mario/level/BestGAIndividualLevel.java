@@ -10,6 +10,7 @@ import dk.itu.mario.geneticAlgorithm.Individual;
 public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
 	private static final int LEVEL_INIT_WIDTH = 5;
+	private static final int EXIT_DISTANCE_FROM_END = 4;
 	
     private GamePlay playerM;
     private Individual bestIndividual;
@@ -37,6 +38,16 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	System.arraycopy(initialGround, 0, ground, 0, initialGround.length);
     	System.arraycopy(bestIndividual.getGround(), 0, ground, initialGround.length, width);
     	
+        // Create the exit
+        xExit = width - EXIT_DISTANCE_FROM_END;
+        yExit = height - ground[width - EXIT_DISTANCE_FROM_END];
+    	
+    	// Fixing exit position to fit a flat ground
+    	for(int i = xExit; i < ground.length; i++)
+    	{
+    		ground[i] = height - yExit;
+    	}
+    	
     	for(int i = 0; i < ground.length; i++)
     	{
     		// Setting the ground blocks 
@@ -44,10 +55,6 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	}
     	
     	fixTerrain(ground);
-    	
-        // Create the exit
-        xExit = width - 4;
-        yExit = height;
     }
     
     private int FindFirstNonEmptyBlock()
@@ -67,6 +74,8 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     private void fixTerrain(int ground[])
     {
+      	// Adding path to the beginning of level to avoid falling 
+    	// and dying when spawning the player 
     	for(int i = 0; i < ground.length; i++)
     	{
             for(int j = height - ground[i] + 1; j <= height; j++)
