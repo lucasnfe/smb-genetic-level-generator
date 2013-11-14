@@ -14,8 +14,8 @@ public class GALevelGenerator implements LevelGenerator {
 	
 	public LevelInterface generateLevel(GamePlay playerMetrics) {
 		
-		UniformGASuperMario gaMap = new UniformGASuperMario(10 * levelWidth, levelWidth, 0.1f, 1.0f, 1, 10);
-		gaMap.StartEvolution(12 * levelWidth);
+		UniformGASuperMario gaMap = new UniformGASuperMario(10 * levelWidth, levelWidth, 0.1f, 1.0f, 1, (int)(0.22 * levelWidth));
+		gaMap.StartEvolution(15 * levelWidth);
 		
 		LevelInterface level = new BestGAIndividualLevel(levelWidth, 15, new Random().nextLong(), 1, 1, playerMetrics, gaMap.getBestIndividual());
 		

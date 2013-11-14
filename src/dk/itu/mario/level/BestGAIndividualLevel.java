@@ -17,7 +17,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     public BestGAIndividualLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestIndividual) {
         
-    	super(width, height);
+    	super(LEVEL_INIT_WIDTH + width + EXIT_DISTANCE_FROM_END, height);
     	
         this.playerM = playerMetrics;
         this.bestIndividual = bestIndividual;
@@ -33,14 +33,16 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	
     	Arrays.fill(initialGround, FindFirstNonEmptyBlock());
     	
-    	int ground[] = new int[width + LEVEL_INIT_WIDTH];
+    	int ground[] = new int[width];
+    	
+    	System.out.println(width);
     	
     	System.arraycopy(initialGround, 0, ground, 0, initialGround.length);
-    	System.arraycopy(bestIndividual.getGround(), 0, ground, initialGround.length, width);
+    	System.arraycopy(bestIndividual.getGround(), 0, ground, initialGround.length, bestIndividual.getGround().length);
     	
         // Create the exit
-        xExit = width - EXIT_DISTANCE_FROM_END;
-        yExit = height - ground[width - EXIT_DISTANCE_FROM_END];
+        xExit = bestIndividual.getGround().length + EXIT_DISTANCE_FROM_END;
+        yExit = height - ground[bestIndividual.getGround().length];
     	
     	// Fixing exit position to fit a flat ground
     	for(int i = xExit; i < ground.length; i++)
