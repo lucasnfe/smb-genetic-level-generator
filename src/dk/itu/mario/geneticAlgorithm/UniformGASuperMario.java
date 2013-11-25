@@ -81,19 +81,6 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	@Override
 	public void Mutation() {
 		
-		Random generator = new Random();
-		
-		for(int i = 0; i < chromossomeSize/Individual.MIN_GROUND_SEQUENCE; i++)
-		{
-			if(generator.nextDouble() < mutationProbability)
-			{
-				for(int j = i; j < i + Individual.MIN_GROUND_SEQUENCE; j++)
-				{
-					int randomBlockInSegment = generator.nextInt(Individual.MIN_GROUND_SEQUENCE);
-					matingPool[i].setGroundBlock(j, matingPool[i].getGround()[i + randomBlockInSegment]);
-				}
-			}
-		}
 	}
 
 }

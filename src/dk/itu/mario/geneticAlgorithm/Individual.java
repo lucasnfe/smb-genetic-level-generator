@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class Individual {
 
-	public static final int MIN_GROUND_SEQUENCE = 5;
-	public static final int MAX_GROUND_HEIGHT = 6;
+	public static final int MIN_GROUND_SEQUENCE = 3;
+	public static final int MAX_GROUND_HEIGHT = 10;
 	
 	private float fitness;
 	

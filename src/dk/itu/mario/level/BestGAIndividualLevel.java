@@ -8,18 +8,20 @@ import dk.itu.mario.geneticAlgorithm.Individual;
 
 public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
-	private static final int LEVEL_INIT_WIDTH = 5;
-	private static final int EXIT_DISTANCE_FROM_END = 10;
+	private static final int LEVEL_INIT_WIDTH = 1;
+	private static final int EXIT_DISTANCE_FROM_END = 4;
 	
+	private int minGroundSequence;
     private GamePlay playerM;
     private Individual bestIndividual;
     
-    public BestGAIndividualLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestIndividual) {
+    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestIndividual, int minGroundSequence) {
         
-    	super(LEVEL_INIT_WIDTH + width + EXIT_DISTANCE_FROM_END, height);
+    	super((LEVEL_INIT_WIDTH + bestIndividual.getGround().length + EXIT_DISTANCE_FROM_END) * minGroundSequence, height);
     	
         this.playerM = playerMetrics;
         this.bestIndividual = bestIndividual;
+        this.minGroundSequence = minGroundSequence;
         
         creat(seed, difficulty, type);
     }
@@ -36,7 +38,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	Arrays.fill(initialGround, FindFirstNonEmptyBlock(bestIndividualGround));
     	Arrays.fill(endGround, FindFirstNonEmptyBlock(reverseGround(bestIndividualGround)));
     	
-    	int ground[] = new int[width];
+    	int ground[] = new int[initialGround.length + bestIndividualGround.length + endGround.length];
     	
     	System.out.println(width);
     	
@@ -44,14 +46,83 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	System.arraycopy(bestIndividual.getGround(), 0, ground, initialGround.length, bestIndividualGround.length);
     	System.arraycopy(endGround, 0, ground, initialGround.length + bestIndividualGround.length, endGround.length);
     	    	    	
+    	int k = 0;
+    	
     	for(int i = 0; i < ground.length; i++)
     	{
-    		// Setting the ground blocks 
-    		setBlock(i, height - ground[i], HILL_TOP);
+        	for(int j = 0; j < minGroundSequence; j++)
+        	{
+        		// Setting the ground blocks 
+        		setBlock(k + j, height - ground[i], HILL_TOP);
+        		
+              	// Adding path to the beginning of level to avoid falling 
+            	// and dying when spawning the player 
+                for(int currentHeight = height - ground[i]; currentHeight <= height; currentHeight++)
+                {
+                	if(i > 0 && j == 0)
+                	{
+                		if(ground[i] > ground[i - 1])
+                		{
+                			if(currentHeight == height - ground[i - 1])
+                			{
+                				setBlock(k + j, currentHeight, RIGHT_POCKET_GRASS);
+                			}
+                			else if(currentHeight == height - ground[i])
+                			{
+                				setBlock(k + j, currentHeight, LEFT_UP_GRASS_EDGE);
+                			}
+                			else if(currentHeight < height - ground[i - 1])
+                			{
+                				setBlock(k + j, currentHeight, LEFT_GRASS_EDGE);
+                			}
+                			else
+                			{
+                				setBlock(k + j, currentHeight, HILL_FILL);
+                			}
+                		}
+            			else
+            			{
+            				setBlock(k + j, currentHeight + 1, HILL_FILL);
+            			}
+                	}
+                	else if(i < ground.length - 1 && j == minGroundSequence - 1)
+                	{
+                		if(ground[i] > ground[i + 1])
+                		{
+                			if(currentHeight == height - ground[i + 1])
+                			{
+                				setBlock(k + j, currentHeight, LEFT_POCKET_GRASS);
+                			}
+                			else if(currentHeight == height - ground[i])
+                			{
+                				setBlock(k + j, currentHeight, RIGHT_UP_GRASS_EDGE);
+                			}
+                			else if(currentHeight < height - ground[i + 1])
+                			{
+                				setBlock(k + j, currentHeight, RIGHT_GRASS_EDGE);
+                			}
+                			else
+                			{
+                				setBlock(k + j, currentHeight, HILL_FILL);
+                			}
+                		}
+            			else
+            			{
+            				setBlock(k + j, currentHeight + 1, HILL_FILL);
+            			}
+                	}
+                	else
+                	{
+                		setBlock(k + j, currentHeight + 1, HILL_FILL);
+                	}
+                }
+        	}
+        	
+        	k += minGroundSequence;
     	}
     	
         // Create the exit
-        xExit = ground.length - (int)(EXIT_DISTANCE_FROM_END / 2);
+        xExit = width - (int)((EXIT_DISTANCE_FROM_END * minGroundSequence)/ 2);
         yExit = height - endGround[0];
     	
     	fixTerrain(ground);
@@ -59,7 +130,9 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     private int []reverseGround(int ground[])
     {
-    	int reversedGround[] = ground;
+    	int reversedGround[] = new int[ground.length];
+    	
+    	System.arraycopy(ground, 0, reversedGround, 0, ground.length);
     	
     	for (int i = 0; i < ground.length / 2; i++) 
     	{
@@ -86,15 +159,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     private void fixTerrain(int ground[])
     {
-      	// Adding path to the beginning of level to avoid falling 
-    	// and dying when spawning the player 
-    	for(int i = 0; i < ground.length; i++)
-    	{
-            for(int j = height - ground[i] + 1; j <= height; j++)
-            {
-            	setBlock(i, j, HILL_FILL);
-            }
-    	}
+
     }
 	
 }
