@@ -45,7 +45,7 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 				int randomGen = generator.nextInt(population.length);
 				tournamentPopulation[j] = population[randomGen];
 			}
-			
+				
 			Arrays.sort(tournamentPopulation, GeneticAlgorithm.individualComparator);
 			matingPool[i] = tournamentPopulation[0];
 		}
@@ -54,30 +54,53 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	@Override
 	public void CrossOver() {
 	
-		Random generator = new Random();
-		
-		int crossPoint = generator.nextInt(chromossomeSize - 1);
-		 
-		Individual son1 = new Individual(chromossomeSize);
-		Individual son2 = new Individual(chromossomeSize);
-		
 		//A 1-point crossover
 		for(int i = 0; i < matingPool.length/2; i += 2)
 		{
-			if(generator.nextDouble() < crossOverProbability)
-			{
-				System.arraycopy(matingPool[i].getGround(), 0, son1.getGround(), 0, crossPoint);
-				System.arraycopy(matingPool[i + 1].getGround(), crossPoint + 1, son1.getGround(), crossPoint + 1, chromossomeSize - crossPoint - 1);
+			Individual son1 = new Individual(chromossomeSize);
+			Individual son2 = new Individual(chromossomeSize);
+		
+			GroundCrossover(matingPool[i], matingPool[i + 1], son1, son2);
+			BlockCrossover(matingPool[i], matingPool[i + 1], son1, son2);
+			EnemiesCrossover(matingPool[i], matingPool[i + 1], son1, son2);
+			CoinsCrossover(matingPool[i], matingPool[i + 1], son1, son2);
 			
-				System.arraycopy(matingPool[i + 1].getGround(), 0, son2.getGround(), 0, crossPoint);
-				System.arraycopy(matingPool[i].getGround(), crossPoint + 1, son2.getGround(), crossPoint + 1, chromossomeSize - crossPoint - 1);
-			
-				matingPool[i] = son1;
-				matingPool[i + 1] = son2;
-			}
+			matingPool[i] = son1;
+			matingPool[i + 1] = son2;
 		}
 	}
-
+	
+	private void GroundCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
+		
+		Random generator = new Random();
+		
+		int groundChromossomeSize = chromossomeSize/Individual.MIN_GROUND;
+		int crossPoint = generator.nextInt(groundChromossomeSize - 1);
+		
+		if(generator.nextDouble() < crossOverProbability)
+		{
+			System.arraycopy(parent1.getGround(), 0, son1.getGround(), 0, crossPoint);
+			System.arraycopy(parent2.getGround(), crossPoint + 1, son1.getGround(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
+		
+			System.arraycopy(parent2.getGround(), 0, son2.getGround(), 0, crossPoint);
+			System.arraycopy(parent1.getGround(), crossPoint + 1, son2.getGround(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
+		}
+	}
+	
+	private void BlockCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
+	
+		
+	}
+	
+	private void EnemiesCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
+	
+		
+	}
+	
+	private void CoinsCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
+	
+	}
+	
 	@Override
 	public void Mutation() {
 		
