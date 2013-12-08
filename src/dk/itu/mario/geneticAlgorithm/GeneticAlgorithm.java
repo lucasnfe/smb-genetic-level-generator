@@ -1,12 +1,9 @@
 package dk.itu.mario.geneticAlgorithm;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
 public abstract class GeneticAlgorithm {
 
-	private int eliteSize;
-	
+	protected int eliteSize;
+	protected int populationSize;
 	protected int currentGeneration;
 	protected int fitnessEvaluationAmount;
 	
@@ -15,96 +12,63 @@ public abstract class GeneticAlgorithm {
 	
 	protected Individual population[];
 	protected Individual matingPool[];
-	
-	protected static Comparator<Individual> individualComparator;
-
-    // We initialize static variables inside a static block.
-    static {
-    	
-    	individualComparator = new Comparator<Individual>() {
-        
-    	@Override
-        public int compare(Individual i1, Individual i2) {
-        	
-    	        if (i1.getFitness() > i2.getFitness()) 
-    	        {
-    	        	return 1;
-    	        }
-    	        else if (i1.getFitness() < i2.getFitness())
-    	        {
-    	        	return -1;
-    	        }
-    	        	
-    	        return 0;
-    		}
-    	};
-    };
-	
+		
 	public GeneticAlgorithm(int populationSize, float mutationProbability, float crossOverProbability, int eliteSize) {
 		
 		population = new Individual[populationSize];
 		matingPool = new Individual[populationSize];
 		
+		this.populationSize = populationSize;
 		this.mutationProbability = mutationProbability;
 		this.crossOverProbability = crossOverProbability;
-		
 		this.eliteSize = eliteSize;
 	}
 	
-	private void EvaluatePopulation() {
+	private void evaluatePopulation() {
 		
 		for(int i = 0; i < population.length; i++) {
 			
-			population[i].calcFitness();
+			population[i].calculateFitness();
 			fitnessEvaluationAmount++;
 		}
 	}
 	
-	protected abstract void SelectPopulation();
+	protected abstract void groupPopulation();
+
+	protected abstract void selectPopulation();
 	
-	public void StartEvolution(int maxGeneration) {
+	public void startEvolution(int maxGeneration) {
 	
-		InitPopulation();
-		EvaluatePopulation();
+		initPopulation();
+		evaluatePopulation();
 		
 		while(currentGeneration < maxGeneration)
 		{
-			SelectPopulation();
-			CrossOver();
-			Mutation();
+			selectPopulation();
+			crossOver();
+			mutation();
 			
 			if(eliteSize > 0) {
 				
-				Elitism();
+				elitism();
 			}
 			
-			population = matingPool.clone();
-				
-			EvaluatePopulation();
-			currentGeneration++;
+			groupPopulation();
+			updatePopulation();
+			evaluatePopulation();
 			
-			System.out.format("best fitness: %f\n", getBestIndividual().getFitness());
+			currentGeneration++;
 		} 
 	}
 	
-	protected abstract void InitPopulation();
-	protected abstract void CrossOver();
-	protected abstract void Mutation();
-	
-	private void Elitism()
+	protected void updatePopulation()
 	{
-		Arrays.sort(population, individualComparator);
-		
-		for(int i = 0; i < eliteSize; i++)
-		{
-			matingPool[i] = population[i];
-		}
+		population = matingPool.clone();
 	}
 	
-	public Individual getBestIndividual()
-	{
-		Arrays.sort(population, individualComparator);
-		
-		return population[0];
-	}
+	protected abstract void initPopulation();
+	protected abstract void crossOver();
+	protected abstract void mutation();
+	protected abstract void elitism();
+
 }

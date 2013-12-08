@@ -1,109 +1,121 @@
 package dk.itu.mario.geneticAlgorithm;
 
-import java.util.Arrays;
-import java.util.Random;
-
 public class UniformGASuperMario extends GeneticAlgorithm {
 
-	private int tournamentSize;
-	private int chromossomeSize;
-	
+	private static final int SUB_POPULATION_AMOUNT = 4;
+		
+	GroundGeneticAlgorithm groundGA;
+	GroundGeneticAlgorithm blocksGA;
+	GroundGeneticAlgorithm enemiesGA;
+	GroundGeneticAlgorithm coinsGA;
+				
 	public UniformGASuperMario(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		
-		this.tournamentSize = tournamentSize;
-		this.chromossomeSize = chromossomeSize;
+		groundGA  = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
+		blocksGA  = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
+		enemiesGA = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
+		coinsGA   = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
 	}
 
 	@Override
-	public void InitPopulation() {
+	protected void initPopulation() {
 		
-		for(int i = 0; i < population.length; i++) {
-			
-			population[i] = new Individual(chromossomeSize);
-		}
+		groundGA.initPopulation();
+		blocksGA.initPopulation();
+		enemiesGA.initPopulation();
+		coinsGA.initPopulation();
 		
-		for(int i = 0; i < matingPool.length; i++) {
-			
-			matingPool[i] = new Individual(chromossomeSize);
-		}
+		groupPopulation();
+	}
+	
+
+	@Override
+	protected void selectPopulation() {
+		
+		groundGA.selectPopulation();
+		blocksGA.selectPopulation();
+		enemiesGA.selectPopulation();
+		coinsGA.selectPopulation();
+		
+		System.out.println("Best ground fitness = " + groundGA.getBestIndividual().fitness);
 	}
 
 	@Override
-	public void SelectPopulation() {
+	protected void crossOver() {
+	
+		groundGA.crossOver();
+		blocksGA.crossOver();
+		enemiesGA.crossOver();
+		coinsGA.crossOver();
+	}
 		
-		// A tournament crossover
-		Random generator = new Random();
+	@Override
+	protected void mutation() {
 		
-		for(int i = 0; i < matingPool.length; i++)
+	}
+	
+	@Override
+	protected void groupPopulation()
+	{
+		groundGA.updatePopulation();
+		blocksGA.updatePopulation();
+		enemiesGA.updatePopulation();
+		coinsGA.updatePopulation();
+		
+		int subPopulationIndex = 0;
+		
+		for(int i = 0 * population.length/SUB_POPULATION_AMOUNT; i < 1 * matingPool.length/SUB_POPULATION_AMOUNT; i++)
 		{
-			Individual tournamentPopulation[] = new Individual[tournamentSize];
+			population[i] = groundGA.population[subPopulationIndex];
+			matingPool[i] = groundGA.matingPool[subPopulationIndex];
 			
-			for(int j = 0; j < tournamentSize; j++)
-			{
-				int randomGen = generator.nextInt(population.length);
-				tournamentPopulation[j] = population[randomGen];
-			}
-				
-			Arrays.sort(tournamentPopulation, GeneticAlgorithm.individualComparator);
-			matingPool[i] = tournamentPopulation[0];
+			subPopulationIndex++;
 		}
-	}
-
-	@Override
-	public void CrossOver() {
-	
-		//A 1-point crossover
-		for(int i = 0; i < matingPool.length/2; i += 2)
-		{
-			Individual son1 = new Individual(chromossomeSize);
-			Individual son2 = new Individual(chromossomeSize);
 		
-			GroundCrossover(matingPool[i], matingPool[i + 1], son1, son2);
-			BlockCrossover(matingPool[i], matingPool[i + 1], son1, son2);
-			EnemiesCrossover(matingPool[i], matingPool[i + 1], son1, son2);
-			CoinsCrossover(matingPool[i], matingPool[i + 1], son1, son2);
+		subPopulationIndex = 0;
+		
+		for(int i = 1 * population.length/SUB_POPULATION_AMOUNT; i < 2 * matingPool.length/SUB_POPULATION_AMOUNT; i++)
+		{
+			population[i] = blocksGA.population[subPopulationIndex];
+			matingPool[i] = blocksGA.matingPool[subPopulationIndex];
 			
-			matingPool[i] = son1;
-			matingPool[i + 1] = son2;
+			subPopulationIndex++;
 		}
-	}
-	
-	private void GroundCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
 		
-		Random generator = new Random();
+		subPopulationIndex = 0;
 		
-		int groundChromossomeSize = chromossomeSize/Individual.MIN_GROUND;
-		int crossPoint = generator.nextInt(groundChromossomeSize - 1);
-		
-		if(generator.nextDouble() < crossOverProbability)
+		for(int i = 2 * population.length/SUB_POPULATION_AMOUNT; i < 3 * matingPool.length/SUB_POPULATION_AMOUNT; i++)
 		{
-			System.arraycopy(parent1.getGround(), 0, son1.getGround(), 0, crossPoint);
-			System.arraycopy(parent2.getGround(), crossPoint + 1, son1.getGround(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
+			population[i] = enemiesGA.population[subPopulationIndex];
+			matingPool[i] = enemiesGA.matingPool[subPopulationIndex];
+			
+			subPopulationIndex++;
+		}
 		
-			System.arraycopy(parent2.getGround(), 0, son2.getGround(), 0, crossPoint);
-			System.arraycopy(parent1.getGround(), crossPoint + 1, son2.getGround(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
+		subPopulationIndex = 0;
+		
+		for(int i = 3 * population.length/SUB_POPULATION_AMOUNT; i < 4 * matingPool.length/SUB_POPULATION_AMOUNT; i++)
+		{
+			population[i] = coinsGA.population[subPopulationIndex];
+			matingPool[i] = coinsGA.matingPool[subPopulationIndex];
+			
+			subPopulationIndex++;
 		}
 	}
 	
-	private void BlockCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
-	
-		
+	protected void elitism()
+	{
+		groundGA.elitism();
+		blocksGA.elitism();
+		enemiesGA.elitism();
+		coinsGA.elitism();		
 	}
 	
-	private void EnemiesCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
-	
-		
+	public Individual GetBestGround()
+	{
+		return groundGA.getBestIndividual();
 	}
-	
-	private void CoinsCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
-	
-	}
-	
-	@Override
-	public void Mutation() {
-		
-	}
-
 }
+
