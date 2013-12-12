@@ -26,11 +26,11 @@ public abstract class GeneticAlgorithm {
     	@Override
         public int compare(Individual i1, Individual i2) {
         	
-    	        if (i1.getFitness() < i2.getFitness()) 
+    	        if (i1.getFitness() > i2.getFitness()) 
     	        {
     	        	return 1;
     	        }
-    	        else if (i1.getFitness() > i2.getFitness())
+    	        else if (i1.getFitness() < i2.getFitness())
     	        {
     	        	return -1;
     	        }

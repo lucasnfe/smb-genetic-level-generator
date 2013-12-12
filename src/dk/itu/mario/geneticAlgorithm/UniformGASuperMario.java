@@ -21,12 +21,12 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		
 		for(int i = 0; i < population.length; i++) {
 			
-			population[i] = new Individual(chromossomeSize);
+			population[i] = new GroundIndividual(chromossomeSize);
 		}
 		
 		for(int i = 0; i < matingPool.length; i++) {
 			
-			matingPool[i] = new Individual(chromossomeSize);
+			matingPool[i] = new GroundIndividual(chromossomeSize);
 		}
 	}
 
@@ -45,7 +45,7 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 				int randomGen = generator.nextInt(population.length);
 				tournamentPopulation[j] = population[randomGen];
 			}
-			
+				
 			Arrays.sort(tournamentPopulation, GeneticAlgorithm.individualComparator);
 			matingPool[i] = tournamentPopulation[0];
 		}
@@ -54,42 +54,39 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	@Override
 	public void CrossOver() {
 	
-		Random generator = new Random();
-		
-		int crossPoint = generator.nextInt(chromossomeSize - 1);
-		 
-		Individual son1 = new Individual(chromossomeSize);
-		Individual son2 = new Individual(chromossomeSize);
-		
 		//A 1-point crossover
 		for(int i = 0; i < matingPool.length/2; i += 2)
 		{
-			if(generator.nextDouble() < crossOverProbability)
-			{
-				System.arraycopy(matingPool[i].getChromossome(), 0, son1.getChromossome(), 0, crossPoint);
-				System.arraycopy(matingPool[i + 1].getChromossome(), crossPoint + 1, son1.getChromossome(), crossPoint + 1, chromossomeSize - crossPoint - 1);
+			GroundIndividual son1 = new GroundIndividual(chromossomeSize);
+			GroundIndividual son2 = new GroundIndividual(chromossomeSize);
+		
+			GroundCrossover(matingPool[i], matingPool[i + 1], son1, son2);
 			
-				System.arraycopy(matingPool[i + 1].getChromossome(), 0, son2.getChromossome(), 0, crossPoint);
-				System.arraycopy(matingPool[i].getChromossome(), crossPoint + 1, son2.getChromossome(), crossPoint + 1, chromossomeSize - crossPoint - 1);
-			
-				matingPool[i] = son1;
-				matingPool[i + 1] = son2;
-			}
+			matingPool[i] = son1;
+			matingPool[i + 1] = son2;
 		}
 	}
-
-	@Override
-	public void Mutation() {
+	
+	private void GroundCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
 		
 		Random generator = new Random();
 		
-		for(int i = 0; i < matingPool.length; i++)
+		int groundChromossomeSize = chromossomeSize/GroundIndividual.MIN_GROUND;
+		int crossPoint = generator.nextInt(groundChromossomeSize - 1);
+		
+		if(generator.nextDouble() < crossOverProbability)
 		{
-			if(generator.nextDouble() < mutationProbability)
-			{
-				matingPool[i] = new Individual(chromossomeSize);
-			}
+			System.arraycopy(parent1.getChrmossome(), 0, son1.getChrmossome(), 0, crossPoint);
+			System.arraycopy(parent2.getChrmossome(), crossPoint + 1, son1.getChrmossome(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
+		
+			System.arraycopy(parent2.getChrmossome(), 0, son2.getChrmossome(), 0, crossPoint);
+			System.arraycopy(parent1.getChrmossome(), crossPoint + 1, son2.getChrmossome(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
 		}
+	}
+	
+	@Override
+	public void Mutation() {
+		
 	}
 
 }
