@@ -3,12 +3,12 @@ package dk.itu.mario.geneticAlgorithm;
 import java.util.Arrays;
 import java.util.Random;
 
-public class UniformGASuperMario extends GeneticAlgorithm {
+public class GAGround extends GeneticAlgorithm {
 
 	private int tournamentSize;
 	private int chromossomeSize;
 	
-	public UniformGASuperMario(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
+	public GAGround(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		

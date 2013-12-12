@@ -1,12 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package dk.itu.mario.geneticAlgorithm;
 
 import java.util.Random;
 
-public class GroundIndividual extends Individual{
+public class GroundIndividual extends Individual {
+	
     public static final int MIN_GROUND = 3;
 	public static final int MIN_GROUND_SEQUENCE = 3;
 	public static final int MAX_GROUND_HEIGHT = 10;
@@ -17,7 +14,7 @@ public class GroundIndividual extends Individual{
 	{
 		super(chromossomeSize);
 		
-                chromossome = new int[chromossomeSize/MIN_GROUND];
+		chromossome = new int[chromossomeSize/MIN_GROUND];
                 
 		Random gerador = new Random();
 		
@@ -35,13 +32,12 @@ public class GroundIndividual extends Individual{
 		for(int i = 0; i < groundChromossomeSize/MIN_GROUND_SEQUENCE; i++)
 		{
 			int tempArray[] = new int[MIN_GROUND_SEQUENCE];
-			
 			System.arraycopy(chromossome, i * MIN_GROUND_SEQUENCE, tempArray, 0, MIN_GROUND_SEQUENCE);
+			
 			fitness += Entropy(tempArray, i);
 		}
 	}
         
-	
 	private float Entropy(int chromossomeSegment[], int actualGround)
 	{
 		float entropy = 0.0f;

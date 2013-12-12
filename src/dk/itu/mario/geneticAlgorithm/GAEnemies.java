@@ -1,56 +1,43 @@
 
-package dk.itu.mario.level.generator;
+package dk.itu.mario.geneticAlgorithm;
 
-import dk.itu.mario.geneticAlgorithm.EnemiesIndividual;
-import static dk.itu.mario.geneticAlgorithm.EnemiesIndividual.MIN_GROUND_SEQUENCE;
-import static dk.itu.mario.geneticAlgorithm.EnemiesIndividual.MIN_GROUND;
-import dk.itu.mario.geneticAlgorithm.GeneticAlgorithm;
-import dk.itu.mario.geneticAlgorithm.Individual;
 import java.util.Arrays;
 import java.util.Random;
 
-public class GAEnemies extends GeneticAlgorithm{
-        private int tournamentSize;
+public class GAEnemies extends GeneticAlgorithm {
+    
+	private int tournamentSize;
 	private int chromossomeSize;
-        private float desiredSparseness;
+    private float desiredSparseness;
 	private Individual bestGroundIndividual;
         
-        private float maxFitness;
+    private float maxFitness;
         
 	public GAEnemies(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize, Individual bestGroundIndividual, float desiredSparseness) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		
-                this.bestGroundIndividual = bestGroundIndividual;
+		this.bestGroundIndividual = bestGroundIndividual;
 		this.tournamentSize = tournamentSize;
 		this.chromossomeSize = chromossomeSize;
-                this.desiredSparseness = desiredSparseness;
+		this.desiredSparseness = desiredSparseness;
                 
-                calcMaxFitness();
+		calcMaxFitness();
              
 	}
 
-        public void calcMaxFitness()
-        {
-            int[] maxSparsenessChromossome = new int[this.chromossomeSize];
-            
-            for(int i = 0; i < chromossomeSize/(MIN_GROUND_SEQUENCE*MIN_GROUND); i++)
-            {
-            maxSparsenessChromossome[i*MIN_GROUND_SEQUENCE*MIN_GROUND] = 1;
-            maxSparsenessChromossome[i*MIN_GROUND_SEQUENCE*MIN_GROUND+MIN_GROUND_SEQUENCE*MIN_GROUND-1] = 1;    
-            }
-            EnemiesIndividual ind = new EnemiesIndividual(chromossomeSize, bestGroundIndividual, maxSparsenessChromossome);
-             
-            maxFitness = 0;
-
-            for(int i = 0; i < chromossomeSize/(MIN_GROUND_SEQUENCE*MIN_GROUND); i++)
-            {
-                int tempArray[] = new int[MIN_GROUND_SEQUENCE*MIN_GROUND];
-                System.arraycopy(ind.getChrmossome(), i * MIN_GROUND_SEQUENCE*MIN_GROUND, tempArray, 0, MIN_GROUND_SEQUENCE*MIN_GROUND);
-                maxFitness += ind.Sparseness(tempArray);
-            }
-            System.out.println("maxFitness: "+maxFitness);
-        }
+    public void calcMaxFitness()
+    {
+        int[] maxSparsenessChromossome = new int[this.chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE];
+        
+    	maxSparsenessChromossome[0] = 1;
+    	maxSparsenessChromossome[this.chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE - 1] = 1;    
+        
+        EnemiesIndividual ind = new EnemiesIndividual(chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE, bestGroundIndividual, maxSparsenessChromossome);
+        maxFitness = ind.Sparseness(maxSparsenessChromossome) * maxSparsenessChromossome.length;
+                     
+        System.out.println("maxFitness: " + maxFitness);
+    }
         
 	@Override
 	public void InitPopulation() {
@@ -97,7 +84,6 @@ public class GAEnemies extends GeneticAlgorithm{
 			EnemiesIndividual son2 = new EnemiesIndividual(chromossomeSize, bestGroundIndividual, desiredSparseness, maxFitness);
                         
 			EnemiesCrossover(matingPool[i], matingPool[i + 1], son1, son2);
-			
 			
 			matingPool[i] = son1;
 			matingPool[i + 1] = son2;

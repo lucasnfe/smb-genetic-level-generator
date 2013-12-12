@@ -10,7 +10,7 @@ import dk.itu.mario.geneticAlgorithm.Individual;
 
 public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
-	private static final int LEVEL_INIT_WIDTH = 1;
+	private static final int LEVEL_INIT_WIDTH = 4;
 	private static final int EXIT_DISTANCE_FROM_END = 4;
 	
 	private int minGroundSequence;
@@ -43,9 +43,6 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	Arrays.fill(endGround, FindFirstNonEmptyBlock(reverseGround(bestIndividualGround)));
     	
     	int ground[] = new int[initialGround.length + bestIndividualGround.length + endGround.length];
-
-    	
-    	System.out.println(width);
     	
     	System.arraycopy(initialGround, 0, ground, 0, initialGround.length);
     	System.arraycopy(bestGroundIndividual.getChrmossome(), 0, ground, initialGround.length, bestIndividualGround.length);
@@ -57,93 +54,99 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	{
         	for(int j = 0; j < minGroundSequence; j++)
         	{
-                    // Setting the ground blocks 
-                    setBlock(k + j, height - ground[i], HILL_TOP);
+               	// Setting the ground blocks 
+                setBlock(k + j, height - ground[i], HILL_TOP);
         		
-                    // Adding path to the beginning of level to avoid falling 
-                    // and dying when spawning the player 
-                    for(int currentHeight = height - ground[i]; currentHeight <= height; currentHeight++)
+                // Adding path to the beginning of level to avoid falling 
+                // and dying when spawning the player 
+                for(int currentHeight = height - ground[i]; currentHeight <= height; currentHeight++)
+                {
+                    if(i > 0 && j == 0)
                     {
-                            if(i > 0 && j == 0)
+                        if(ground[i] > ground[i - 1])
+                        {
+                            if(currentHeight == height - ground[i - 1])
                             {
-                                    if(ground[i] > ground[i - 1])
-                                    {
-                                            if(currentHeight == height - ground[i - 1])
-                                            {
-                                                    setBlock(k + j, currentHeight, RIGHT_POCKET_GRASS);
-                                            }
-                                            else if(currentHeight == height - ground[i])
-                                            {
-                                                    setBlock(k + j, currentHeight, LEFT_UP_GRASS_EDGE);
-                                            }
-                                            else if(currentHeight < height - ground[i - 1])
-                                            {
-                                                    setBlock(k + j, currentHeight, LEFT_GRASS_EDGE);
-                                            }
-                                            else
-                                            {
-                                                    setBlock(k + j, currentHeight, HILL_FILL);
-                                            }
-                                    }
-                                    else
-                                    {
-                                            setBlock(k + j, currentHeight + 1, HILL_FILL);
-                                    }
+                            	setBlock(k + j, currentHeight, RIGHT_POCKET_GRASS);
                             }
-                            else if(i < ground.length - 1 && j == minGroundSequence - 1)
+                            else if(currentHeight == height - ground[i])
                             {
-                                    if(ground[i] > ground[i + 1])
-                                    {
-                                            if(currentHeight == height - ground[i + 1])
-                                            {
-                                                    setBlock(k + j, currentHeight, LEFT_POCKET_GRASS);
-                                            }
-                                            else if(currentHeight == height - ground[i])
-                                            {
-                                                    setBlock(k + j, currentHeight, RIGHT_UP_GRASS_EDGE);
-                                            }
-                                            else if(currentHeight < height - ground[i + 1])
-                                            {
-                                                    setBlock(k + j, currentHeight, RIGHT_GRASS_EDGE);
-                                            }
-                                            else
-                                            {
-                                                    setBlock(k + j, currentHeight, HILL_FILL);
-                                            }
-                                    }
-                                    else
-                                    {
-                                            setBlock(k + j, currentHeight + 1, HILL_FILL);
-                                    }
+                                setBlock(k + j, currentHeight, LEFT_UP_GRASS_EDGE);
+                            }
+                            else if(currentHeight < height - ground[i - 1])
+                            {
+                                setBlock(k + j, currentHeight, LEFT_GRASS_EDGE);
                             }
                             else
                             {
-                                    setBlock(k + j, currentHeight + 1, HILL_FILL);
+                                setBlock(k + j, currentHeight, HILL_FILL);
                             }
+                        }
+                        else
+                        {
+                            setBlock(k + j, currentHeight + 1, HILL_FILL);
+                        }
                     }
+                    else if(i < ground.length - 1 && j == minGroundSequence - 1)
+                    {
+                        if(ground[i] > ground[i + 1])
+                        {
+                            if(currentHeight == height - ground[i + 1])
+                            {
+                                setBlock(k + j, currentHeight, LEFT_POCKET_GRASS);
+                            }
+                            else if(currentHeight == height - ground[i])
+                            {
+                                setBlock(k + j, currentHeight, RIGHT_UP_GRASS_EDGE);
+                            }
+                            else if(currentHeight < height - ground[i + 1])
+                            {
+                                setBlock(k + j, currentHeight, RIGHT_GRASS_EDGE);
+                            }
+                            else
+                            {
+                                setBlock(k + j, currentHeight, HILL_FILL);
+                            }
+                        }
+                        else
+                        {
+                                setBlock(k + j, currentHeight + 1, HILL_FILL);
+                        }
+                    }
+                    else
+                    {
+                            setBlock(k + j, currentHeight + 1, HILL_FILL);
+                    }
+	            }
         	}
         	
-                //Fazer as contas da altura
-                for(int j = 0; j < minGroundSequence; j++)
-        	{
-                    int enemyPos = i * (minGroundSequence - 1) + j;
-                    if(i > LEVEL_INIT_WIDTH && bestEnemyIndividual.getChrmossome()[enemyPos] != 0)
-                    {
-                        SpriteTemplate enemies = new SpriteTemplate(bestEnemyIndividual.getChrmossome()[enemyPos], false);
-                        setSpriteTemplate(enemyPos, height - ground[i] - 4, enemies);
-                    }
-                }
         	k += minGroundSequence;
     	}
+    	
     	for( int i = 0; i < bestEnemyIndividual.getSize(); i++ )
         {
             System.out.print(bestEnemyIndividual.getChrmossome()[i]+" ");
         }
+    	
+        for(int i = LEVEL_INIT_WIDTH * minGroundSequence; i < bestEnemyIndividual.getChrmossome().length; i++)
+    	{
+            if(bestEnemyIndividual.getChrmossome()[i] != 0)
+            {
+            	// Don't insert enemies over holes
+            	int groundIndex = (int) Math.ceil(i / (minGroundSequence));
+            	
+            	if(ground[groundIndex] != 0)
+            	{
+            		SpriteTemplate enemies = new SpriteTemplate(bestEnemyIndividual.getChrmossome()[i], false);
+            		setSpriteTemplate(i, height - ground[groundIndex] - 1, enemies);
+            	}
+            }
+        }
+    	    	
         // Create the exit
         xExit = width - (int)((EXIT_DISTANCE_FROM_END * minGroundSequence)/ 2);
         yExit = height - endGround[0];
-    	
-    	fixTerrain(ground);
+
     }
     
     private int []reverseGround(int ground[])
@@ -174,10 +177,5 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	
     	return 1;
     }
-    
-    private void fixTerrain(int ground[])
-    {
-
-    }
-	
+    	
 }
