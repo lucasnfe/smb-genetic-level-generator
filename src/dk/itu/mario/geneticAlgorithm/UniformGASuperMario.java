@@ -5,7 +5,7 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	private static final int SUB_POPULATION_AMOUNT = 4;
 		
 	GroundGeneticAlgorithm groundGA;
-	GroundGeneticAlgorithm blocksGA;
+	BlocksGeneticAlgorithm blocksGA;
 	GroundGeneticAlgorithm enemiesGA;
 	GroundGeneticAlgorithm coinsGA;
 				
@@ -14,7 +14,7 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		
 		groundGA  = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
-		blocksGA  = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
+		blocksGA  = new BlocksGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
 		enemiesGA = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
 		coinsGA   = new GroundGeneticAlgorithm(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
 	}
@@ -30,7 +30,6 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		groupPopulation();
 	}
 	
-
 	@Override
 	protected void selectPopulation() {
 		
@@ -116,6 +115,11 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	public Individual GetBestGround()
 	{
 		return groundGA.getBestIndividual();
+	}
+	
+	public Individual GetBestBlocks()
+	{
+		return blocksGA.getBestIndividual();
 	}
 }
 

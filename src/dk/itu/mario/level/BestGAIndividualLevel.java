@@ -14,14 +14,17 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
 	private int minGroundSequence;
     private GamePlay playerM;
-    private Individual bestIndividual;
     
-    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestIndividual) {
+    private Individual bestGround;
+    private Individual bestBlocks;
+    
+    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestGround, Individual bestBlocks) {
         
-    	super((LEVEL_INIT_WIDTH + bestIndividual.getChromossome().length + EXIT_DISTANCE_FROM_END) * GroundIndividual.MIN_GROUND, height);
+    	super((LEVEL_INIT_WIDTH + bestGround.getChromossome().length + EXIT_DISTANCE_FROM_END) * GroundIndividual.MIN_GROUND, height);
     	
         this.playerM = playerMetrics;
-        this.bestIndividual = bestIndividual;
+        this.bestGround = bestGround;
+        this.bestBlocks = bestBlocks;
         this.minGroundSequence = GroundIndividual.MIN_GROUND;
         
         creat(seed, difficulty, type);
@@ -34,7 +37,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	int initialGround[] = new int[LEVEL_INIT_WIDTH];
     	int endGround[] = new int[EXIT_DISTANCE_FROM_END];
     	
-    	int bestIndividualGround[] = bestIndividual.getChromossome();    	
+    	int bestIndividualGround[] = bestGround.getChromossome();    	
     	
     	Arrays.fill(initialGround, FindFirstNonEmptyBlock(bestIndividualGround));
     	Arrays.fill(endGround, FindFirstNonEmptyBlock(reverseGround(bestIndividualGround)));
@@ -44,7 +47,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     	System.out.println(width);
     	
     	System.arraycopy(initialGround, 0, ground, 0, initialGround.length);
-    	System.arraycopy(bestIndividual.getChromossome(), 0, ground, initialGround.length, bestIndividualGround.length);
+    	System.arraycopy(bestGround.getChromossome(), 0, ground, initialGround.length, bestIndividualGround.length);
     	System.arraycopy(endGround, 0, ground, initialGround.length + bestIndividualGround.length, endGround.length);
     	    	    	
     	int k = 0;

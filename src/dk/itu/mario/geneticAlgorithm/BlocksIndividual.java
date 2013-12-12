@@ -11,8 +11,8 @@ public class BlocksIndividual extends Individual {
 
 	@Override
 	public void calculateFitness() {
-		// TODO Auto-generated method stub
 
+		
 	}
 
 }

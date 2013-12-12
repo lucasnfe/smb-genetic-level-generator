@@ -1,9 +1,5 @@
 package dk.itu.mario.geneticAlgorithm;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Random;
-
 public class GroundGeneticAlgorithm extends GeneticAlgorithm {
 			
 	private int tournamentSize;
@@ -17,30 +13,6 @@ public class GroundGeneticAlgorithm extends GeneticAlgorithm {
 		this.tournamentSize = tournamentSize;
 		this.chromossomeSize = chromossomeSize;
 	}
-	
-	protected static Comparator<Individual> individualComparator;
-
-    // We initialize static variables inside a static block.
-    static {
-    	
-    	individualComparator = new Comparator<Individual>() {
-        
-    	@Override
-        public int compare(Individual i1, Individual i2) {
-        	
-    	        if (i1.getFitness() > i2.getFitness()) 
-    	        {
-    	        	return 1;
-    	        }
-    	        else if (i1.getFitness() < i2.getFitness())
-    	        {
-    	        	return -1;
-    	        }
-    	        	
-    	        return 0;
-    		}
-    	};
-    };
 	
 	@Override
 	protected void initPopulation() {
@@ -59,7 +31,7 @@ public class GroundGeneticAlgorithm extends GeneticAlgorithm {
 	@Override
 	protected void selectPopulation() {
 		
-		Individual selectedPopulation[] = Tournament(population);
+		Individual selectedPopulation[] = Tournament(population, tournamentSize);
 		
 		for(int i = 0; i < selectedPopulation.length; i++)
 		{
@@ -67,29 +39,6 @@ public class GroundGeneticAlgorithm extends GeneticAlgorithm {
 		}
 	}
 	
-	private Individual []Tournament(Individual population[])
-	{
-		// A tournament crossover
-		Random generator = new Random();
-		Individual selectedIndividuals[] = new Individual[population.length];
-		
-		for(int i = 0; i < population.length; i++)
-		{
-			Individual tournamentPopulation[] = new Individual[tournamentSize];
-			
-			for(int j = 0; j < tournamentSize; j++)
-			{
-				int randomGen = generator.nextInt(population.length);
-				tournamentPopulation[j] = population[randomGen];
-			}
-				
-			Arrays.sort(tournamentPopulation, individualComparator);
-			selectedIndividuals[i] = tournamentPopulation[0];
-		}
-		
-		return selectedIndividuals;
-	}
-
 	@Override
 	protected void crossOver() {
 		
@@ -98,50 +47,16 @@ public class GroundGeneticAlgorithm extends GeneticAlgorithm {
 			GroundIndividual son1 = new GroundIndividual(chromossomeSize);
 			GroundIndividual son2 = new GroundIndividual(chromossomeSize);
 		
-			GroundCrossover(matingPool[i], matingPool[i + 1], son1, son2);
+			onePointCrossover(matingPool[i], matingPool[i + 1], son1, son2);
 			
 			matingPool[i] = son1;
 			matingPool[i + 1] = son2;
 		}
 
 	}
-	
-	private void GroundCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
 		
-		Random generator = new Random();
-		
-		//A 1-point crossover
-		int groundChromossomeSize = parent1.getChromossome().length;
-		int crossPoint = generator.nextInt(groundChromossomeSize - 1);
-		
-		System.arraycopy(parent1.getChromossome(), 0, son1.getChromossome(), 0, crossPoint);
-		System.arraycopy(parent2.getChromossome(), crossPoint + 1, son1.getChromossome(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
-	
-		System.arraycopy(parent2.getChromossome(), 0, son2.getChromossome(), 0, crossPoint);
-		System.arraycopy(parent1.getChromossome(), crossPoint + 1, son2.getChromossome(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
-	}
-	
-	public Individual getBestIndividual()
-	{		
-		Arrays.sort(population, individualComparator);
-		
-		return population[0];
-	}
-
 	@Override
 	protected void mutation() {
-
-	}
-
-	@Override
-	protected void elitism() {
-		
-		Arrays.sort(population, individualComparator);
-		
-		for(int i = 0; i < eliteSize; i++)
-		{
-			matingPool[i] = population[i];
-		}
 
 	}
 	

@@ -10,16 +10,16 @@ import dk.itu.mario.level.BestGAIndividualLevel;
 
 public class GALevelGenerator implements LevelGenerator {
 	
-	private static int LEVEL_WIDTH = 50;
+	private static int LEVEL_WIDTH = 300;
 	private static int LEVEL_HEIGHT = 15;
 	private static int INDIVIDUAL_SIZE = LEVEL_WIDTH;
 	
 	public LevelInterface generateLevel(GamePlay playerMetrics) {
 		
-		UniformGASuperMario gaMap = new UniformGASuperMario(LEVEL_WIDTH * 4, INDIVIDUAL_SIZE, 0.01f, 0.8f, 5, 2);
+		UniformGASuperMario gaMap = new UniformGASuperMario(200, INDIVIDUAL_SIZE, 0.01f, 0.8f, 5, 2);
 		gaMap.startEvolution(LEVEL_WIDTH * 2);
 		
-		LevelInterface level = new BestGAIndividualLevel(LEVEL_HEIGHT, new Random().nextLong(), 1, 1, playerMetrics, gaMap.GetBestGround());
+		LevelInterface level = new BestGAIndividualLevel(LEVEL_HEIGHT, new Random().nextLong(), 1, 1, playerMetrics, gaMap.GetBestGround(), gaMap.GetBestBlocks());
 		
 		return level;
 	}
