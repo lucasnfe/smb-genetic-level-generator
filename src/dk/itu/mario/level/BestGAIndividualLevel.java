@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelInterface;
+import dk.itu.mario.engine.sprites.SpriteTemplate;
 import dk.itu.mario.geneticAlgorithm.GroundIndividual;
 import dk.itu.mario.geneticAlgorithm.Individual;
 
@@ -17,16 +18,20 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     private Individual bestGround;
     private Individual bestBlocks;
+    private Individual bestEnemies;
     
-    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestGround, Individual bestBlocks) {
+    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestGround, Individual bestBlocks, Individual bestEnemies, int minGroundSequence) {
         
     	super((LEVEL_INIT_WIDTH + bestGround.getChromossome().length + EXIT_DISTANCE_FROM_END) * GroundIndividual.MIN_GROUND, height);
     	
         this.playerM = playerMetrics;
+        
         this.bestGround = bestGround;
         this.bestBlocks = bestBlocks;
-        this.minGroundSequence = GroundIndividual.MIN_GROUND;
+        this.bestEnemies = bestEnemies;
         
+        this.minGroundSequence = minGroundSequence;
+     
         creat(seed, difficulty, type);
     }
     
@@ -124,6 +129,26 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
         	
         	k += minGroundSequence;
     	}
+    	
+    	for( int i = 0; i < bestEnemies.getChromossome().length; i++ )
+        {
+            System.out.print(bestEnemies.getChromossome()[i]+" ");
+        }
+    	
+        for(int i = LEVEL_INIT_WIDTH * minGroundSequence; i < bestEnemies.getChromossome().length; i++)
+    	{
+            if(bestEnemies.getChromossome()[i] != 0)
+            {
+            	// Don't insert enemies over holes
+            	int groundIndex = (int) Math.ceil(i / (minGroundSequence));
+            	
+            	if(ground[groundIndex] != 0)
+            	{
+            		SpriteTemplate enemies = new SpriteTemplate(bestEnemies.getChromossome()[i], false);
+            		setSpriteTemplate(i, height - ground[groundIndex] - 1, enemies);
+            	}
+            }
+        }
     	
         // Create the exit
         xExit = width - (int)((EXIT_DISTANCE_FROM_END * minGroundSequence)/ 2);

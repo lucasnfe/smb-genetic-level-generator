@@ -1,11 +1,11 @@
 package dk.itu.mario.geneticAlgorithm;
 
-public class BlocksGeneticAlgorithm extends GeneticAlgorithm {
+public class BlocksGA extends GeneticAlgorithm {
 	
 	private int tournamentSize;
 	private int chromossomeSize;
 
-	public BlocksGeneticAlgorithm(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
+	public BlocksGA(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		

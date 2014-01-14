@@ -1,11 +1,11 @@
 package dk.itu.mario.geneticAlgorithm;
 
-public class GroundGeneticAlgorithm extends GeneticAlgorithm {
+public class GroundGA extends GeneticAlgorithm {
 			
 	private int tournamentSize;
 	private int chromossomeSize;
 	
-	public GroundGeneticAlgorithm(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
+	public GroundGA(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
 		// TODO Auto-generated constructor stub
