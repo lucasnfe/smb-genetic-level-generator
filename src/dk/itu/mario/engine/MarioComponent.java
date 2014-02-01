@@ -44,7 +44,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    private Scene scene;
 		    private SonarSoundEngine sound;
 		    private boolean focused = false;
-		    private boolean useScale2x = false;
+		    private boolean useScale2x = true;
 		    private boolean isCustom = false;
 
 
@@ -325,7 +325,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;
-		    	Mario.lives = 3;
+		    	Mario.lives = 99;
 
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);
@@ -340,7 +340,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 		    	Mario.fire = false;
 		    	Mario.large = false;
 		    	Mario.coins = 0;
-		    	Mario.lives = 3;
+		    	Mario.lives = 99;
 
 		    	randomLevel.init();
 		    	randomLevel.setSound(sound);

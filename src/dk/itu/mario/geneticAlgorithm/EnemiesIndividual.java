@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class EnemiesIndividual extends Individual {
 
-	public static final int ENEMIES_TYPES = 3;
+	public static final int ENEMIES_TYPES = 4;
     public static final int ENEMIES_BLOCKS_SIZE = 6;
     
     private float desiredSparseness;

@@ -4,7 +4,7 @@ package dk.itu.mario.geneticAlgorithm;
 import java.util.Arrays;
 import java.util.Random;
 
-public class EnemiesGA extends GeneticAlgorithm {
+public class CoinsGA extends GeneticAlgorithm {
     
 	private int tournamentSize;
 	private int chromossomeSize;
@@ -12,7 +12,7 @@ public class EnemiesGA extends GeneticAlgorithm {
         
     private float maxFitness;
         
-	public EnemiesGA(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize, float desiredSparseness, int stopCriteria) {
+	public CoinsGA(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize, float desiredSparseness, int stopCriteria) {
 		
 		super(populationSize, mutationProbability, crossOverProbability, eliteSize, stopCriteria);
 		
@@ -21,17 +21,16 @@ public class EnemiesGA extends GeneticAlgorithm {
 		this.desiredSparseness = desiredSparseness;
                 
 		calcMaxFitness();
-             
 	}
 
 	protected void calcMaxFitness()
     {
-        int[] maxSparsenessChromossome = new int[this.chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE];
+        int[] maxSparsenessChromossome = new int[this.chromossomeSize/CoinsIndividual.COINS_AREA];
         
     	maxSparsenessChromossome[0] = 1;
-    	maxSparsenessChromossome[this.chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE - 1] = 1;    
+    	maxSparsenessChromossome[this.chromossomeSize/CoinsIndividual.COINS_AREA - 1] = 1;    
         
-        EnemiesIndividual ind = new EnemiesIndividual(chromossomeSize/EnemiesIndividual.ENEMIES_BLOCKS_SIZE, maxSparsenessChromossome);
+    	CoinsIndividual ind = new CoinsIndividual(chromossomeSize/CoinsIndividual.COINS_AREA, maxSparsenessChromossome);
         maxFitness = ind.Sparseness(maxSparsenessChromossome) * maxSparsenessChromossome.length;
                      
         System.out.println("maxFitness: " + maxFitness);
@@ -53,12 +52,12 @@ public class EnemiesGA extends GeneticAlgorithm {
 		
 		for(int i = 0; i < population.length; i++) {
 			
-			population[i] = new EnemiesIndividual(chromossomeSize, desiredSparseness, maxFitness);
+			population[i] = new CoinsIndividual(chromossomeSize, desiredSparseness, maxFitness);
 		}
 		
 		for(int i = 0; i < matingPool.length; i++) {
 			
-			matingPool[i] = new EnemiesIndividual(chromossomeSize, desiredSparseness, maxFitness);
+			matingPool[i] = new CoinsIndividual(chromossomeSize, desiredSparseness, maxFitness);
 		}
 		
 	}
@@ -79,22 +78,29 @@ public class EnemiesGA extends GeneticAlgorithm {
 		{
 			if(rand.nextFloat() < crossOverProbability)
 			{
-				EnemiesIndividual son1 = new EnemiesIndividual(chromossomeSize, desiredSparseness, maxFitness);
-				EnemiesIndividual son2 = new EnemiesIndividual(chromossomeSize, desiredSparseness, maxFitness);
-	                        
+				CoinsIndividual son1 = new CoinsIndividual(chromossomeSize, desiredSparseness, maxFitness);
+				CoinsIndividual son2 = new CoinsIndividual(chromossomeSize, desiredSparseness, maxFitness);
+                        
 				onePointCrossover(matingPool[i], matingPool[i + 1], son1, son2);
 				
 				matingPool[i] = son1;
 				matingPool[i + 1] = son2;
 			}
 		}
-		
 	}
 
 	@Override
 	protected void mutation() {
-		// TODO Auto-generated method stub
 		
+		Random rand = new Random(); 
+		
+		for(int i = 0; i < population.length; i++) {
+			
+			if(rand.nextFloat() < mutationProbability)
+			{
+				population[i].getChromossome()[rand.nextInt() % chromossomeSize] = rand.nextInt() % CoinsIndividual.MAX_COINS_HEIGHT ;
+			}
+		}
 	}
     
 }

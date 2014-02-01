@@ -6,6 +6,11 @@ import java.util.Random;
 
 public abstract class GeneticAlgorithm {
 
+	float lastBestFitness;
+	
+	private int stopCriteria;
+	private int generationsWithoutFitnessIncrease;
+	
 	protected int eliteSize;
 	protected int populationSize;
 	protected int currentGeneration;
@@ -40,7 +45,7 @@ public abstract class GeneticAlgorithm {
     	};
     };
     
-	public GeneticAlgorithm(int populationSize, float mutationProbability, float crossOverProbability, int eliteSize) {
+	public GeneticAlgorithm(int populationSize, float mutationProbability, float crossOverProbability, int eliteSize, int stopCriteria) {
 		
 		population = new Individual[populationSize];
 		matingPool = new Individual[populationSize];
@@ -49,6 +54,7 @@ public abstract class GeneticAlgorithm {
 		this.mutationProbability = mutationProbability;
 		this.crossOverProbability = crossOverProbability;
 		this.eliteSize = eliteSize;
+		this.stopCriteria = stopCriteria;
 	}
     
 	protected Individual []Tournament(Individual population[], int tournamentSize)
@@ -88,6 +94,67 @@ public abstract class GeneticAlgorithm {
 		System.arraycopy(parent2.getChromossome(), 0, son2.getChromossome(), 0, crossPoint);
 		System.arraycopy(parent1.getChromossome(), crossPoint + 1, son2.getChromossome(), crossPoint + 1, groundChromossomeSize - crossPoint - 1);
 	}
+	
+	protected void uniformCrossover(Individual parent1, Individual parent2, Individual son1, Individual son2) {
+		
+		Random rand = new Random(); 
+		
+		for(int i = 0; i < son1.getChromossome().length; i++)
+		{
+			if(rand.nextFloat() < 0.5f)
+			{
+				son1.getChromossome()[i] = parent1.getChromossome()[i];
+			}
+			else
+			{
+				son1.getChromossome()[i] = parent2.getChromossome()[i];
+			}  
+		}
+		
+		for(int i = 0; i < son2.getChromossome().length; i++)
+		{
+			if(rand.nextFloat() < 0.5f)
+			{
+				son2.getChromossome()[i] = parent1.getChromossome()[i];
+			}
+			else
+			{
+				son2.getChromossome()[i] = parent2.getChromossome()[i];
+			}  
+		}
+	}
+		
+	protected void averageCrossover(Individual parent1, Individual parent2, Individual son1)
+	{
+		for(int i = 0; i < son1.getChromossome().length; i++)
+		{
+			son1.getChromossome()[i] = (parent1.getChromossome()[i] + parent2.getChromossome()[i])/2;
+		}
+	}
+	
+	protected boolean stopCriteria()
+	{
+		if(stopCriteria > 0)
+		{
+			if(getBestIndividual().getFitness() <= lastBestFitness)
+			{
+				generationsWithoutFitnessIncrease++;
+			}
+			else
+			{
+				lastBestFitness = getBestIndividual().getFitness();
+				generationsWithoutFitnessIncrease = 0;
+			}
+		
+			if(generationsWithoutFitnessIncrease >= stopCriteria)
+			{
+				System.out.println("generations = " + generationsWithoutFitnessIncrease);
+				return true;
+			}
+		}
+		
+		return false;
+	}
 			
 	private void evaluatePopulation() {
 		
@@ -102,6 +169,8 @@ public abstract class GeneticAlgorithm {
 	
 		initPopulation();
 		evaluatePopulation();
+		
+		lastBestFitness = getBestIndividual().getFitness();
 		
 		while(currentGeneration < maxGeneration)
 		{

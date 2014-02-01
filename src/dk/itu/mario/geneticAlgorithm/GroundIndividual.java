@@ -4,15 +4,18 @@ import java.util.Random;
 
 public class GroundIndividual extends Individual {
 
-	public static final int MIN_GROUND = 3;
+	public static final int MIN_GROUND = 2;
 	public static final int JUMP_SIZE = 4;
-	public static final int MIN_GROUND_SEQUENCE = 3;
-	public static final int MAX_GROUND_HEIGHT = 10;
-	public static final int MAX_BLOCK_HEIGHT = 6;
+	public static final int MIN_GROUND_SEQUENCE = 2;
+	public static final int MAX_GROUND_HEIGHT = 4;
 	
-	public GroundIndividual(int chromossomeSize)
+	private float desiredEntropy;
+	
+	public GroundIndividual(int chromossomeSize, float desiredEntropy)
 	{
 		super(chromossomeSize);
+		
+		this.desiredEntropy = desiredEntropy;
 		
 		chromossome = new int[chromossomeSize/MIN_GROUND];
 		
@@ -28,7 +31,7 @@ public class GroundIndividual extends Individual {
 		
 		// Ground fitness is based on the entropy of the terrain's sequences
 		// of size MIN_GROUND_SEQUENCE
-		fitness = 0.0f;
+		float localEntropy = 0.0f;
 		
 		int groundChromossomeSize = chromossomeSize/MIN_GROUND;
 		for(int i = 0; i < groundChromossomeSize/MIN_GROUND_SEQUENCE; i++)
@@ -36,8 +39,25 @@ public class GroundIndividual extends Individual {
 			int tempArray[] = new int[MIN_GROUND_SEQUENCE];
 			
 			System.arraycopy(chromossome, i * MIN_GROUND_SEQUENCE, tempArray, 0, MIN_GROUND_SEQUENCE);
-			fitness += calculateEntropy(tempArray);
+			localEntropy += calculateEntropy(tempArray);
 		}
+				
+        float normalDist = (localEntropy/maxFitness(MIN_GROUND_SEQUENCE)) - desiredEntropy;
+        fitness = (float) Math.sqrt(normalDist * normalDist);
+	}
+	
+	private float maxFitness(int minGroundSenquence)
+	{		
+		int tempArray[] = new int[minGroundSenquence];
+		for(int i = 0; i < tempArray.length; i++)
+		{
+			tempArray[i] = i % MAX_GROUND_HEIGHT;
+		}
+		
+		int groundChromossomeSize = chromossomeSize/MIN_GROUND;
+		float maxFitness = calculateEntropy(tempArray) * (groundChromossomeSize/minGroundSenquence);
+		
+		return maxFitness;
 	}
 	
 	private float calculateEntropy(int chromossomeSegment[])

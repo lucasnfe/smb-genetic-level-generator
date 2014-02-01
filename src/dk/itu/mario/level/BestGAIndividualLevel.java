@@ -1,6 +1,7 @@
 package dk.itu.mario.level;
 
 import java.util.Arrays;
+import java.util.Random;
 
 import dk.itu.mario.MarioInterface.GamePlay;
 import dk.itu.mario.MarioInterface.LevelInterface;
@@ -10,7 +11,7 @@ import dk.itu.mario.geneticAlgorithm.Individual;
 
 public class BestGAIndividualLevel extends Level implements LevelInterface {
 	
-	private static final int LEVEL_INIT_WIDTH = 1;
+	private static final int LEVEL_INIT_WIDTH = 3;
 	private static final int EXIT_DISTANCE_FROM_END = 4;
 	
 	private int minGroundSequence;
@@ -19,8 +20,9 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     private Individual bestGround;
     private Individual bestBlocks;
     private Individual bestEnemies;
+    private Individual bestCoins;
     
-    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestGround, Individual bestBlocks, Individual bestEnemies, int minGroundSequence) {
+    public BestGAIndividualLevel(int height, long seed, int difficulty, int type, GamePlay playerMetrics, Individual bestGround, Individual bestBlocks, Individual bestEnemies, Individual bestCoins) {
         
     	super((LEVEL_INIT_WIDTH + bestGround.getChromossome().length + EXIT_DISTANCE_FROM_END) * GroundIndividual.MIN_GROUND, height);
     	
@@ -29,8 +31,9 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
         this.bestGround = bestGround;
         this.bestBlocks = bestBlocks;
         this.bestEnemies = bestEnemies;
+        this.bestCoins = bestCoins;
         
-        this.minGroundSequence = minGroundSequence;
+        this.minGroundSequence = GroundIndividual.MIN_GROUND;
      
         creat(seed, difficulty, type);
     }
@@ -130,11 +133,7 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
         	k += minGroundSequence;
     	}
     	
-    	for( int i = 0; i < bestEnemies.getChromossome().length; i++ )
-        {
-            System.out.print(bestEnemies.getChromossome()[i]+" ");
-        }
-    	
+    	// Placing enemies in the level
         for(int i = LEVEL_INIT_WIDTH * minGroundSequence; i < bestEnemies.getChromossome().length; i++)
     	{
             if(bestEnemies.getChromossome()[i] != 0)
@@ -149,12 +148,33 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
             	}
             }
         }
+        
+    	// Placing blocks in the level
+        for(int i = LEVEL_INIT_WIDTH * minGroundSequence; i < bestBlocks.getChromossome().length; i++)
+    	{
+        	int groundIndex = (int) Math.ceil(i / (minGroundSequence));
+        	
+        	setBlock(i, height - ground[groundIndex] - 4, getBlockFromType(bestBlocks.getChromossome()[i]));
+        }
+        
+    	// Placing coins in the level
+        for(int i = LEVEL_INIT_WIDTH * minGroundSequence; i < bestCoins.getChromossome().length; i++)
+    	{
+        	int groundIndex = (int) Math.ceil(i / (minGroundSequence));
+        	
+        	if(bestCoins.getChromossome()[i] > 0)
+        	{
+        		setBlock(i, height - ground[groundIndex] - 4 - bestCoins.getChromossome()[i], COIN);
+        	}
+        }
     	
         // Create the exit
         xExit = width - (int)((EXIT_DISTANCE_FROM_END * minGroundSequence)/ 2);
         yExit = height - endGround[0];
     	
-    	fixTerrain(ground);
+        printBestIndividuals();
+        
+  //  	fixTerrain(ground);
     }
     
     private int []reverseGround(int ground[])
@@ -188,7 +208,100 @@ public class BestGAIndividualLevel extends Level implements LevelInterface {
     
     private void fixTerrain(int ground[])
     {
-
+    	int lastHeight = ground[0];
+    	
+    	for(int i = 1; i < ground.length; i++)
+    	{
+    		if(Math.abs(ground[i] - lastHeight) >= 5)
+    		{
+    			Random gerador = new Random();
+    			
+    			int blocksAmount = gerador.nextInt(3) + 1;
+    			
+    			if(ground[i] > lastHeight)
+    			{
+    				for(int j = 0; j < blocksAmount; j++)
+    				{
+    					int blockType = gerador.nextInt(3) + 2;
+    					
+						int xPos = i * this.minGroundSequence - blocksAmount - GroundIndividual.MIN_GROUND/2 + j;
+						int yPos = height - lastHeight - 4;
+    					
+						if(getBlock(xPos, yPos) == 0)
+						{
+							setBlock(xPos, yPos, getBlockFromType(blockType));
+						}
+    				}
+    			}
+    			else
+    			{
+					for(int j = 0; j < blocksAmount; j++)
+					{
+						int blockType = gerador.nextInt(3) + 2;
+						
+						int xPos = i * this.minGroundSequence + GroundIndividual.MIN_GROUND/2 + j;
+						int yPos = height - ground[i] - 4;
+						
+						if(getBlock(xPos, yPos) == 0)
+						{
+							setBlock(xPos, yPos, getBlockFromType(blockType));
+						}
+					}
+    			}
+    		}
+  
+    		lastHeight = ground[i];
+    	}
     }
-	
+    
+    private byte getBlockFromType(int type)
+    {
+    	switch(type)
+    	{
+    		case 1:
+        		return BLOCK_EMPTY;
+        	
+    		case 2:
+    			return BLOCK_POWERUP;
+        		
+    		case 3:
+    			return BLOCK_COIN;
+    			
+    		case 4:
+    			return ROCK;
+    	}
+    	
+    	return 0;
+    }
+    
+    private void printBestIndividuals()
+    {
+    	for( int i = 0; i < bestGround.getChromossome().length; i++ )
+        {
+            System.out.print(bestGround.getChromossome()[i] + " ");
+        }
+    	
+    	System.out.println();
+    	
+    	for( int i = 0; i < bestBlocks.getChromossome().length; i++ )
+        {
+            System.out.print(bestBlocks.getChromossome()[i] + " ");
+        }
+    	
+    	System.out.println();
+    	
+    	for( int i = 0; i < bestEnemies.getChromossome().length; i++ )
+        {
+            System.out.print(bestEnemies.getChromossome()[i] + " ");
+        }
+    	
+    	System.out.println();
+    	
+    	for( int i = 0; i < bestCoins.getChromossome().length; i++ )
+        {
+            System.out.print(bestCoins.getChromossome()[i] + " ");
+        }
+    	
+    	System.out.println();
+    }
 }

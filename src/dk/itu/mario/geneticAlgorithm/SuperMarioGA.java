@@ -1,22 +1,22 @@
 package dk.itu.mario.geneticAlgorithm;
 
-public class UniformGASuperMario extends GeneticAlgorithm {
+public class SuperMarioGA extends GeneticAlgorithm {
 
 	private static final int SUB_POPULATION_AMOUNT = 4;
 		
 	GroundGA groundGA;
 	BlocksGA blocksGA;
 	EnemiesGA enemiesGA;
-	GroundGA coinsGA;
+	CoinsGA coinsGA;
 				
-	public UniformGASuperMario(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize) {
+	public SuperMarioGA(int populationSize, int chromossomeSize, float mutationProbability, float crossOverProbability, int eliteSize, int tournamentSize, int stopCriteria) {
 		
-		super(populationSize, mutationProbability, crossOverProbability, eliteSize);
+		super(populationSize, mutationProbability, crossOverProbability, eliteSize, stopCriteria);
 		
-		groundGA  = new GroundGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
-		blocksGA  = new BlocksGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
-        enemiesGA = new EnemiesGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize, 0f);
-		coinsGA   = new GroundGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize);
+		groundGA  = new GroundGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize, 0f, stopCriteria);
+		blocksGA  = new BlocksGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize, 1f, stopCriteria);
+        enemiesGA = new EnemiesGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize, 0.5f, stopCriteria);
+		coinsGA   = new CoinsGA(populationSize/SUB_POPULATION_AMOUNT, chromossomeSize, mutationProbability, crossOverProbability, eliteSize, tournamentSize, 0.5f, stopCriteria);
 	}
 
 	@Override
@@ -38,8 +38,7 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 		enemiesGA.selectPopulation();
 		coinsGA.selectPopulation();
 		
-		System.out.println("Best ground fitness = " + currentGeneration + " " + groundGA.getBestIndividual().fitness);
-		System.out.println("Best enemies fitness = " + currentGeneration + " " + enemiesGA.getBestIndividual().fitness);
+		System.out.println(currentGeneration + " " + groundGA.getBestIndividual().fitness + " " + blocksGA.getBestIndividual().fitness + " " + enemiesGA.getBestIndividual().fitness + " " + coinsGA.getBestIndividual().fitness);
 	}
 
 	@Override
@@ -126,6 +125,11 @@ public class UniformGASuperMario extends GeneticAlgorithm {
 	public Individual GetBestEnemies()
 	{
 		return enemiesGA.getBestIndividual();
+	}
+	
+	public Individual GetBestCoins()
+	{
+		return coinsGA.getBestIndividual();
 	}
 }
 
