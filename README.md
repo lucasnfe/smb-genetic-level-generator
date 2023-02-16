@@ -1,4 +1,12 @@
 # A Multi-population Genetic Algorithm for Procedural Generation of Levels for Platform Games
+
+<p float="left">
+  <img src="/docs/level1.png" width="210" />
+  <img src="/docs/level2.png" width="210" />
+  <img src="/docs/level3.png" width="210" />
+  <img src="/docs/level4.png" width="210" />
+</p>
+
 This repository contains the source code to reproduce the results of the [GECCO'14](http://www.sigevo.org/gecco-2014/) paper [A Multi-population Genetic Algorithm for Procedural Generation of Levels for Platform Games](https://www.lucasnferreira.com/assets/papers/2014/gecco-mario.pdf).
 This paper presents a multi-population genetic algorithm for procedural generation of levels for platform games such as Super Mario Bros. The algorithm evolves four elements of the game during its generations: terrain, enemies, coins and blocks. Each element has its own codification, population and fitness function. At the end of the evolution, the best four elements are combined to construct the level. The method has as input a vector of parameters to configure the characteristics of each element.
 
